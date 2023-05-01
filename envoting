@@ -1,0 +1,312 @@
+EVOTING
+public class MainActivity extends AppCompatActivity {
+ private RadioGroup candidatesRadioGroup;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ candidatesRadioGroup = findViewById(R.id.candidates_radio_group);
+ }
+ public void onVoteClick(View view) {
+ int selectedRadioButtonId = candidatesRadioGroup.getCheckedRadioButtonId();
+ if (selectedRadioButtonId != -1) {
+ RadioButton selectedRadioButton = findViewById(selectedRadioButtonId);
+ String selectedCandidate = selectedRadioButton.getText().toString();
+ shareVote(selectedCandidate);
+ Toast.makeText(this, "Your vote for " + selectedCandidate + " has been cast.",
+Toast.LENGTH_SHORT).show();
+ } else {
+ Toast.makeText(this, "Please select a candidate to vote for.", Toast.LENGTH_SHORT).show();
+ }
+ }
+ private void shareVote(String candidate) {
+ Intent intent = new Intent(Intent.ACTION_SEND);
+ intent.setType("text/plain");
+ intent.putExtra(Intent.EXTRA_TEXT, "I have voted for " + candidate + ".");
+ startActivity(Intent.createChooser(intent, "Share your vote"));
+ }
+}
+XML
+<LinearLayout
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical"
+ android:padding="16dp">
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="Select a candidate to vote for:"
+ android:textSize="20sp"
+ android:layout_marginBottom="16dp"/>
+ <RadioGroup
+ android:id="@+id/candidates_radio_group"
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content">
+ <RadioButton
+ android:id="@+id/candidate_one_radio_button"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="Candidate One"/>
+ <RadioButton
+ android:id="@+id/candidate_two_radio_button"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="Candidate Two"/>
+ <RadioButton
+ android:id="@+id/candidate_three_radio_button"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="Candidate Three"/>
+ </RadioGroup>
+ <Button
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:text="Vote"
+ android:onClick="onVoteClick"
+ android:layout_marginTop="16dp"/>
+</LinearLayout>
+-----------------------------------------------------------------------------------------------------------------
+Calculator
+public class MainActivity extends AppCompatActivity {
+ private TextView resultTextView;
+ private String currentNumber = "";
+ private String operator = "";
+ private double result = 0.0;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ resultTextView = findViewById(R.id.result_text_view);
+ }
+ public void onNumberClick(View view) {
+ String buttonValue = ((Button) view).getText().toString();
+ currentNumber += buttonValue;
+ resultTextView.setText(currentNumber);
+ }
+ public void onOperatorClick(View view) {
+ operator = ((Button) view).getText().toString();
+ result = Double.parseDouble(currentNumber);
+ currentNumber = "";
+ }
+ public void onEqualClick(View view) {
+ double current = Double.parseDouble(currentNumber);
+ switch (operator) {
+ case "+":
+ result += current;
+ break;
+ case "-":
+ result -= current;
+ break;
+ case "*":
+ result *= current;
+ break;
+ case "/":
+ result /= current;
+ break;
+ }
+ resultTextView.setText(String.valueOf(result));
+ currentNumber = "";
+ }
+ public void onClearClick(View view) {
+ result = 0.0;
+ currentNumber = "";
+ operator = "";
+ resultTextView.setText("0");
+ }
+ public void onBackspaceClick(View view) {
+ if (currentNumber.length() > 0) {
+ currentNumber = currentNumber.substring(0, currentNumber.length() - 1);
+ resultTextView.setText(currentNumber);
+ }
+ }
+ public void onDecimalClick(View view) {
+ if (!currentNumber.contains(".")) {
+ currentNumber += ".";
+ resultTextView.setText(currentNumber);
+ }
+ }
+}
+XML
+<LinearLayout
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical"
+ android:padding="16dp">
+ <TextView
+ android:id="@+id/result_text_view"
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:gravity="end"
+ android:text="0"
+ android:textSize="32sp"/>
+ <LinearLayout
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:orientation="horizontal"
+ android:layout_marginTop="16dp">
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="7"
+ android:onClick="onNumberClick"/>
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="8"
+ android:onClick="onNumberClick"/>
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="9"
+ android:onClick="onNumberClick"/>
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="/"
+ android:onClick="onOperatorClick"/>
+ </LinearLayout>
+ <LinearLayout
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:orientation="horizontal"
+ android:layout_marginTop="16dp">
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="4"
+ android:onClick="onNumberClick"/>
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="
+----------------------------------------------------------------------------------------------------
+Tost
+public class MainActivity extends AppCompatActivity {
+ private ListView bookListView;
+ private String[] bookTitles;
+ private String[] bookPrices;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ bookListView = findViewById(R.id.book_list_view);
+ // Define the book titles and prices
+ bookTitles = getResources().getStringArray(R.array.book_titles);
+ bookPrices = getResources().getStringArray(R.array.book_prices);
+ // Define an ArrayAdapter to populate the ListView with book titles
+ ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+ android.R.layout.simple_list_item_1, bookTitles);
+ bookListView.setAdapter(adapter);
+ // Set an item click listener to show the price of the selected book using a Toast
+ bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+ @Override
+ public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+ String selectedBook = bookTitles[position];
+ String selectedPrice = bookPrices[position];
+ String message = "The price of " + selectedBook + " is " + selectedPrice;
+ Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+ }
+ });
+ }
+}
+XML
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:id="@+id/activity_main"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ tools:context=".MainActivity">
+ <ListView
+ android:id="@+id/book_list_view"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent" />
+</RelativeLayout>
+---------------------------------------------------------------------------
+book
+public class MainActivity extends AppCompatActivity {
+ private ListView bookListView;
+ private String[] bookTitles;
+ private String[] bookPrices;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ bookListView = findViewById(R.id.book_list_view);
+ // Define the book titles and prices
+ bookTitles = getResources().getStringArray(R.array.book_titles);
+ bookPrices = getResources().getStringArray(R.array.book_prices);
+ // Define an ArrayAdapter to populate the ListView with book titles
+ ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+ android.R.layout.simple_list_item_1, bookTitles);
+ bookListView.setAdapter(adapter);
+ // Set an item click listener to show the price of the selected book using a Toast
+ bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+ @Override
+ public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+ String selectedBook = bookTitles[position];
+ String selectedPrice = bookPrices[position];
+ String message = "The price of " + selectedBook + " is " + selectedPrice;
+ Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+ }
+ });
+ }
+}
+XML
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:id="@+id/activity_main"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ tools:context=".MainActivity">
+ <ListView
+ android:id="@+id/book_list_view"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent" />
+</RelativeLayout>
+---------------------------------------
+garbage
+public class MainActivity extends AppCompatActivity {
+ private Spinner garbageSpinner;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ garbageSpinner = findViewById(R.id.garbage_spinner);
+ // Define an ArrayAdapter to populate the spinner with garbage types
+ ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+ R.array.garbage_types, android.R.layout.simple_spinner_item);
+ adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+ garbageSpinner.setAdapter(adapter);
+ // Set an item selected listener to launch the DisposalActivity when a garbage type is selected
+ garbageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+ @Override
+ public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+ String selectedGarbage = parent.getItemAtPosition(position).toString();
+ launchDisposalActivity(selectedGarbage);
+ }
+ @Override
+ public void onNothingSelected(AdapterView<?> parent) {
+ // Do nothing
+ }
+ });
+ }
+ private void launchDisposalActivity(String garbageType) {
+ Intent intent = new Intent(this, DisposalActivity.class);
+ intent.putExtra("garbage_type", garbageType);
+ startActivity(intent);
+ }
+}
+XML
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:id="@+id/activity_main"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ tools:context=".MainActivity">
+ <Spinner
+ android:id="@+id/garbage_spinner"
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:layout_centerInParent="true"
+ android:entries="@array/garbage_types"
+ android:prompt="@string/garbage_prompt" />
+</RelativeLayout>
